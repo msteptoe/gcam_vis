@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<style>
+
+.dot circle {
+  fill: lightsteelblue;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.dot circle.dragging {
+  fill: red;
+  stroke: brown;
+}
+
+.axis line {
+  fill: none;
+  stroke: #ddd;
+  shape-rendering: crispEdges;
+  vector-effect: non-scaling-stroke;
+}
+
+</style>
+<body>
+
+<canvas id="cnv" width="400" height="400" style="border: 1px solid black;"></canvas>
+<div id="myDiv" style="width: 400px; height: 400px; border: 1px solid black;"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+<script src="js/3D.js"></script>
+<script>
+    renderCanvas();
+    renderD3();
+</script>
+
+</body>
+</html>

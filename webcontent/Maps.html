@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>GCAM</title>
+    <meta charset="utf-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="lib/leaflet/leaflet.css" />
+    <link rel="stylesheet" href="lib/jquery-ui/assets/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="lib/jquery-ui/custom-theme/jquery-ui-1.10.3.custom.css">
+
+    <link rel="stylesheet" href="lib/jquery-ui/assets/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="lib/bootstrap-select.min.css">
+    <link rel="stylesheet" href="lib/datatables.min.css" />
+    <link rel="stylesheet" href="lib/jQuery-contextMenu/jquery.contextMenu.min.css" />
+    <style>
+        html,
+        body {
+            font: 100%;
+            margin: 0 auto;
+            padding: 0;
+            padding-top: 30px;
+            text-align: center;
+            height: 100%;
+            width: 99%;
+        }
+
+        svg {
+            font: 10px sans-serif;
+        }
+
+        rect {
+            stroke-width: 2;
+        }
+        /*https://coderwall.com/p/ryargg/a-very-simple-loading-animation-in-5-lines-of-javascript*/
+
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 1000;
+            height: 100%;
+            text-align: center;
+            margin: auto;
+            padding: 0;
+            overflow: hidden;
+            font-size: 250%;
+            visibility: none;
+            vertical-align: middle;
+        }
+
+        .no-link {
+            cursor: pointer;
+        }
+
+        .removeIcon {
+            height: 13px;
+            position: relative;
+            float: right;
+            width: 13px;
+            -webkit-filter: grayscale(100%);
+            /* Safari 6.0 - 9.0 */
+            filter: grayscale(100%);
+        }
+
+        .removeIcon:hover {
+            filter: none;
+            -webkit-filter: grayscale(0%);
+            cursor: pointer;
+        }
+
+        #loadingScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 1000;
+            height: 100%;
+            text-align: center;
+            margin: auto;
+            padding: 0;
+            overflow: hidden;
+            font-size: 250%;
+            display: none;
+            vertical-align: middle;
+        }
+
+        #fountainTextG {
+            position: absolute;
+        }
+
+        .fountainTextG {
+            color: rgb(0, 126, 204);
+            font-family: Arial;
+            font-size: 106px;
+            text-decoration: none;
+            font-weight: normal;
+            font-style: normal;
+            float: left;
+            animation-name: bounce_fountainTextG;
+            -o-animation-name: bounce_fountainTextG;
+            -ms-animation-name: bounce_fountainTextG;
+            -webkit-animation-name: bounce_fountainTextG;
+            -moz-animation-name: bounce_fountainTextG;
+            animation-duration: 3.46s;
+            -o-animation-duration: 3.46s;
+            -ms-animation-duration: 3.46s;
+            -webkit-animation-duration: 3.46s;
+            -moz-animation-duration: 3.46s;
+            animation-iteration-count: infinite;
+            -o-animation-iteration-count: infinite;
+            -ms-animation-iteration-count: infinite;
+            -webkit-animation-iteration-count: infinite;
+            -moz-animation-iteration-count: infinite;
+            animation-direction: normal;
+            -o-animation-direction: normal;
+            -ms-animation-direction: normal;
+            -webkit-animation-direction: normal;
+            -moz-animation-direction: normal;
+            transform: scale(.5);
+            -o-transform: scale(.5);
+            -ms-transform: scale(.5);
+            -webkit-transform: scale(.5);
+            -moz-transform: scale(.5);
+        }
+
+        #fountainTextG_1 {
+            animation-delay: 1.24s;
+            -o-animation-delay: 1.24s;
+            -ms-animation-delay: 1.24s;
+            -webkit-animation-delay: 1.24s;
+            -moz-animation-delay: 1.24s;
+        }
+
+        #fountainTextG_2 {
+            animation-delay: 1.48s;
+            -o-animation-delay: 1.48s;
+            -ms-animation-delay: 1.48s;
+            -webkit-animation-delay: 1.48s;
+            -moz-animation-delay: 1.48s;
+        }
+
+        #fountainTextG_3 {
+            animation-delay: 1.73s;
+            -o-animation-delay: 1.73s;
+            -ms-animation-delay: 1.73s;
+            -webkit-animation-delay: 1.73s;
+            -moz-animation-delay: 1.73s;
+        }
+
+        #fountainTextG_4 {
+            animation-delay: 1.98s;
+            -o-animation-delay: 1.98s;
+            -ms-animation-delay: 1.98s;
+            -webkit-animation-delay: 1.98s;
+            -moz-animation-delay: 1.98s;
+        }
+
+        #fountainTextG_5 {
+            animation-delay: 2.22s;
+            -o-animation-delay: 2.22s;
+            -ms-animation-delay: 2.22s;
+            -webkit-animation-delay: 2.22s;
+            -moz-animation-delay: 2.22s;
+        }
+
+        #fountainTextG_6 {
+            animation-delay: 2.47s;
+            -o-animation-delay: 2.47s;
+            -ms-animation-delay: 2.47s;
+            -webkit-animation-delay: 2.47s;
+            -moz-animation-delay: 2.47s;
+        }
+
+        #fountainTextG_7 {
+            animation-delay: 2.72s;
+            -o-animation-delay: 2.72s;
+            -ms-animation-delay: 2.72s;
+            -webkit-animation-delay: 2.72s;
+            -moz-animation-delay: 2.72s;
+        }
+
+
+
+
+        @keyframes bounce_fountainTextG {
+            0% {
+                transform: scale(1);
+                color: rgb(0, 126, 204);
+            }
+
+            100% {
+                transform: scale(.5);
+                color: rgb(255, 255, 255);
+            }
+        }
+
+        @-o-keyframes bounce_fountainTextG {
+            0% {
+                -o-transform: scale(1);
+                color: rgb(0, 126, 204);
+            }
+
+            100% {
+                -o-transform: scale(.5);
+                color: rgb(255, 255, 255);
+            }
+        }
+
+        @-ms-keyframes bounce_fountainTextG {
+            0% {
+                -ms-transform: scale(1);
+                color: rgb(0, 126, 204);
+            }
+
+            100% {
+                -ms-transform: scale(.5);
+                color: rgb(255, 255, 255);
+            }
+        }
+
+        @-webkit-keyframes bounce_fountainTextG {
+            0% {
+                -webkit-transform: scale(1);
+                color: rgb(0, 126, 204);
+            }
+
+            100% {
+                -webkit-transform: scale(.5);
+                color: rgb(255, 255, 255);
+            }
+        }
+
+        @-moz-keyframes bounce_fountainTextG {
+            0% {
+                -moz-transform: scale(1);
+                color: rgb(0, 126, 204);
+            }
+
+            100% {
+                -moz-transform: scale(.5);
+                color: rgb(255, 255, 255);
+            }
+        }
+
+        td.highlight {
+            background-color: whitesmoke !important;
+        }
+
+        .loadingBar {
+            height: 10px;
+            background-color: white;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 999999;
+        }
+
+        .normalWeight {
+            font-weight: normal !important;
+        }
+
+        .newBackground {
+            /*background-color: #337ab7;*/
+            background-color: #428bca;
+        }
+
+        .navbar-default .navbar-nav>li>a.newColor {
+            color: white;
+        }
+
+        .navbar-default .navbar-brand.newColor {
+            color: white;
+        }
+
+        .navbar-default .navbar-nav>.dropdown>a .caret.newColor {
+            border-top-color: white;
+        }
+
+        .no-link-drop {
+            cursor: pointer;
+            text-align: left;
+        }
+
+        #maps-container {
+            width: 100%;
+            height: 100%;
+        }
+
+        #maps-main-container {
+            overflow-y: auto;
+            overflow-x: auto;
+            /*width: 100%;*/
+            height: 100%;
+            float: left;
+            /*white-space: nowrap;*/
+        }
+
+        #maps-row-header {
+            overflow-y: hidden;
+            height: 100%;
+            float: left;
+        }
+
+        .small-map {
+            display: inline-block;
+            margin: 0 2px;
+        }
+
+        .scenario-name {
+            text-align: center;
+            margin: 0 2px;
+            display: inline-block;
+            height: 25px;
+        }
+
+        .row-name {
+            text-align: center;
+            margin: 0 2px 5px;
+        }
+
+        .map-row {
+            width: 100%;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar navbar-default navbar-fixed-top newBackground" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+                <a class="navbar-brand newColor" href="#" onclick="location.href='';">GCAM</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class="dropdown">
+                        <a href="#file" class="dropdown-toggle newColor" data-toggle="dropdown">Jobs <b class="caret newColor"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a class="no-link-drop" onclick="showDialog('newJob')">New</a></li>
+                            <li><a class="no-link-drop" onclick="showDialog('completedJobs')">Completed</a></li>
+                            <!--<li><a class="no-link-drop" onclick="showDialog('fea')">Select New Features</a></li>-->
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+    </div>
+
+    <div id="loadingScreen">
+        <div id="fountainTextG">
+            <div id="fountainTextG_1" class="fountainTextG">L</div>
+            <div id="fountainTextG_2" class="fountainTextG">o</div>
+            <div id="fountainTextG_3" class="fountainTextG">a</div>
+            <div id="fountainTextG_4" class="fountainTextG">d</div>
+            <div id="fountainTextG_5" class="fountainTextG">i</div>
+            <div id="fountainTextG_6" class="fountainTextG">n</div>
+            <div id="fountainTextG_7" class="fountainTextG">g</div>
+        </div>
+    </div>
+
+    <div id="maps-container">
+        <div id="maps-row-header">
+        </div>
+        <div id="maps-main-container">
+        </div>
+    </div>
+
+    <div id="dialog-fea" title="Feature Selection" style="text-align: left">
+    </div>
+
+    <div id="dialog-newJob" title="Database Finder" style="text-align: left">
+        <div id="sct-controls-container" style="width: 100%">
+            <fieldset>
+                <legend>Directory Path</legend>
+                <label>
+					Specify the absolute path for the databass:
+					<input type="text" id="dPath">
+				</label>
+            </fieldset>
+        </div>
+    </div>
+
+
+    <script src="lib/leaflet/leaflet.js"></script>
+
+    <script type="text/javascript" src="lib/jquery-3.2.0.min.js"></script>
+    <script type="text/javascript" src="lib/jquery-migrate-3.0.0.min.js"></script>
+
+    <script type="text/javascript" src="lib/d3.min.js"></script>
+    <script src="lib/jquery-ui/assets/js/vendor/bootstrap.js"></script>
+    <script src="lib/jquery-ui/assets/js/vendor/jquery-ui-1.10.3.custom.min.js"></script>
+    <script src="lib/bootstrap-select.min.js"></script>
+
+    <script src="lib/colorbrewer.js"></script>
+    <script src="lib/d3.tip.v0.6.3.js"></script>
+    <script src="lib/figue.js"></script>
+    <script src="lib/canvasloader.js"></script>
+    <script src="lib/jQuery-contextMenu/jquery.contextMenu.min.js"></script>
+    <script src="lib/jQuery-contextMenu/jquery.ui.position.min.js"></script>
+    <script src="lib/socket.io.js"></script>
+
+    <script src="js/Global.js"></script>
+    <script src="js/Loading.js"></script>
+    <script src="js/Regions.js"></script>
+    <script src="js/Maps.js"></script>
+    <script>
+        localStorage.clear();
+
+        var socket = io();
+
+        $(window).resize(function () {
+            resizeMaps();
+        });
+
+
+        function showDialog(view) {
+            $(".ui-dialog-content").dialog("close");
+            state.activeDialog = view;
+
+            $('#dialog-' + view).dialog("open");
+        }
+
+        $(function () {
+            $("#dialog-newJob").dialog({
+                resizable: false,
+                height: "auto",
+                width: "auto",
+                modal: false,
+                autoOpen: false,
+                buttons: [
+                    {
+                        text: "Start",
+                        click: function () {
+                            $(this).dialog("close");
+                            // Send path to server for parsing and update progress
+                            // runDatabase();
+
+                            var path = $('#dPath').val();
+                            console.log(path);
+                            socket.emit('checkPath', path);
+                        },
+                        "class": "ui-button-primary"
+                    },
+                    {
+                        text: "Cancel",
+                        click: function () {
+                            $(this).dialog("close");
+                        }
+                    }
+                ]
+            });
+        });
+
+        // Setup Leaflet map
+		/*var bounds = L.latLngBounds(L.latLng(90,180), L.latLng(-60,-180));
+		var map = L.map('map',{
+			center: [40,0],
+			zoom: 2,
+			maxBounds:bounds
+		});
+
+		L.tileLayer(
+			"https://c.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+		    attribution: '&copy; ' + '<a href="https://openstreetmap.org">OpenStreetMap</a>' + ' Contributors',
+		      maxZoom: 5,
+		      minZoom: 1,
+		      tileSize: 256,
+		      noWrap: true,
+		      bounds:bounds
+		}).addTo(map);
+
+		state.map = map;*/
+
+        function loadingComplete() {
+            // $('#file-selection').show();
+
+            // processAllInputs();
+
+            // buildFeatureSelection(clusterKeys);
+            progressLoadingBar();
+            addMaps();
+            hideLoading();
+            // showDialog('fea');
+        }
+
+        function runDatabase() {
+            console.log("runDatabase Begin", new Date());
+            showLoading(true);
+            state.server = true;
+
+            // $('#par-controls-container').hide();
+
+            state.fileMode = 1;
+
+
+            var files = [];
+            for (var fileIndex = 0; fileIndex < 16; fileIndex++) {
+                files.push("scenarios-database_basexdb_" + fileIndex + ".json");
+            }
+
+            state.geoLoaded = 0,
+                state.scenariosLoaded = 0;
+            state.scenariosProc = 0;
+            state.filesLoaded = 0;
+            state.filesCount = files.length;
+            state.featuresSelected = 0;
+            fileNames = [];
+
+            clusterShapefile = {},
+                clusterData = {},
+                clusterQueries = [],
+                clusterKeys = {};
+
+            $.each(files, function (index, file) {
+                fileNames.push(file);
+                var path = "../data/r/";
+                $.getJSON(path + file, function (parsedJson) {
+                    // console.log(file)
+
+                    clusterData[file] = parsedJson;
+
+                    // loadClusterJSON(clusterData[file], parsedJson);
+                    state.filesLoaded++;
+                    state.scenariosLoaded++;
+
+                    if (state.scenariosLoaded == 2) {
+                        state.years = parsedJson.scenario.years;
+
+                        // $('#par-controls-container').show();
+
+                        // var yearSelect = $('#par-year-select');
+                        // yearSelect.empty();
+                        // yearSelect.append($("<option/>")
+                        // 	.val(-1)
+                        // 	.text('All'));
+                        // $.each(state.years, function (key, value) {
+                        // 	yearSelect.append($("<option/>")
+                        // 		.val(key)
+                        // 		.text(value));
+                        // });
+                    }
+
+                    if (state.filesLoaded == state.filesCount) {
+                        console.log("readFileNew End", new Date());
+
+                        clusterQueries = parsedJson.queries;
+                        clusterQueries.forEach((query, index) => {
+                            clusterKeys[query] = ["data"];
+                            clusterMetrics[query] = parsedJson.data[query].units[0];
+                        });
+
+                        if (state.scenariosLoaded > 1) {
+                            loadingComplete();
+                        }
+                        else {
+                            hideLoading();
+                            alert("Atleast two scenario files must be uploaded!");
+                        }
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+
+</html>

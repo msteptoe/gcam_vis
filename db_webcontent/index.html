@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>GCAM</title>
+	<meta charset="utf-8" />
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="lib/leaflet.css" />
+	<!-- <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css"> -->
+	<link rel="stylesheet" href="lib/jquery-ui/assets/css/bootstrap.min.css">
+
+	<!-- <link rel="stylesheet" href="lib/jquery-ui/jquery-ui.css"> -->
+	<link rel="stylesheet" href="lib/jquery-ui/custom-theme/jquery-ui-1.10.3.custom.css">
+
+	<link rel="stylesheet" href="lib/jquery-ui/assets/css/font-awesome.min.css">
+
+	<link rel="stylesheet" href="lib/bootstrap-select.min.css">
+	<link rel="stylesheet" href="lib/datatables.min.css"/>
+	<!-- <link rel="stylesheet" href="https://cdn.datatables.net/t/dt/dt-1.10.11,fc-3.2.1,fh-3.1.1/datatables.min.css"/> -->
+	<link rel="stylesheet" href="lib/jQuery-contextMenu/jquery.contextMenu.min.css"/>
+	<style>
+
+	html, body
+	{
+	    font: 100%;
+	    margin: 0 auto;
+	    padding: 0;
+	    padding-top: 30px;
+	    text-align: center;
+	    height: 100%;
+	    width: 99%;
+	}
+
+	svg {
+	  font: 10px sans-serif;
+	}
+
+	.legend tspan {
+	  font: 8px sans-serif;
+	}
+	.area {
+	  fill: red;
+	  clip-path: url(#clip);
+	}
+	.axis path,
+	.axis line {
+	  fill: none;
+	  stroke: #000;
+	  shape-rendering: crispEdges;
+	}
+
+	.brush .extent {
+	  stroke: #fff;
+	  fill-opacity: .125;
+	  shape-rendering: crispEdges;
+	}
+
+	.x.axis path {
+	  display: none;
+	}
+
+	.line {
+	  fill: none;
+	  stroke: steelblue;
+	  stroke-width: 1.5px;
+	}
+
+	#dialog-map
+	{
+	    width: 50%;
+	    height: 50%;
+	    margin:0px auto;
+	}
+	#map {
+		/*float:left;*/
+	    /*width: 60%;*/
+	    width: 95%;
+	    height: 95%;
+	    position: relative;
+	    margin: auto;
+	}
+	#info {
+	    width: 85%;
+	    height: 50%;
+	    position: relative;
+	    float:left;
+	    /*float:right;*/
+	    display: none;
+	}
+	#file-div{
+		position: relative;
+		float:left;
+		width: calc(30% - 10px);
+		padding-left: 10px;
+		height: 50%;
+		display: none;
+	}
+	.fileInputDiv{
+		display:block;
+		width: 100%;
+	}
+	#file-selection{
+		/*font-size: 12px;*/
+		margin-top:5px;
+		display:block;
+	}
+
+	/*#fileSelectedDiv{
+		font-size: 10px;
+	}*/
+
+	#fileSelected-button{
+		width: 100%;
+	}
+
+	#timeline-container{
+		width: 100%;
+	    height: 25%;
+	    float: left;
+	    position: relative;
+	}
+	#timeline{
+		width : 100%;
+		height: 100%;
+	}
+
+	/**********
+	*  Legend
+	*/
+	/*#legend{
+		width: 100%;
+		position: absolute;
+		height:50%;
+    	bottom: 0;
+    	display:block;
+	}*/
+	#legend{
+		width: 15%;
+		position: relative;
+		height: 49%;
+		float: right;
+		display: none;
+	}
+	.legend {                                               
+		font-size: 12px;                                      
+	}	                                                       
+	rect {                                                  
+		stroke-width: 2;                                      
+	}                                                       
+    
+
+	/*https://coderwall.com/p/ryargg/a-very-simple-loading-animation-in-5-lines-of-javascript*/
+	#loading{
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		background:  rgba(255,255,255,0.7);
+    	z-index:  1000;
+		height: 100%;
+		text-align: center;
+		margin: auto;
+		padding: 0;
+		overflow: hidden;
+		font-size: 250%;
+		visibility: none;
+		vertical-align: middle;
+	}
+
+	.no-link{
+		cursor: pointer;
+	}
+
+	
+	/* Dendogram styling*/
+	#den-container{
+		width: 50%;
+		height: 50%;
+		float: left;
+	}
+
+	.node {
+	  cursor: pointer;
+	}
+
+	.node circle {
+	  fill: #fff;
+	  stroke: steelblue;
+	  stroke-width: 1.5px;
+	}
+
+	.node text {
+	  font: 10px sans-serif;
+	}
+
+	.link {
+	  fill: none;
+	  stroke: #ccc;
+	  stroke-width: 1.5px;
+	}
+
+	/* Parallel Coordinates styling */
+	.background path {
+	  fill: none;
+	  stroke: #ddd;
+	  shape-rendering: crispEdges;
+	}
+
+	.foreground path {
+	  fill: none;
+	  stroke: steelblue;
+	}
+
+	.brush .extent {
+	  fill-opacity: .3;
+	  stroke: #fff;
+	  shape-rendering: crispEdges;
+	}
+
+	.wrapper {
+		position:absolute;
+		top:50%;
+		left:50%;
+	}
+
+	.axis text {
+	  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+	  cursor: move;
+	}
+
+	#par-container
+	{
+	    width: 50%;
+	    height: 100%;
+	    margin: 0px auto;
+	    float: right;
+	}
+
+	#par-controls-container
+	{
+		width: 100%;
+	    /*height: 5%;*/
+		/*display: none;*/
+	}
+
+	#par-main-container
+	{
+		width: 100%;
+	    height: 92%;
+	}
+
+	#par-svg-container
+	{
+		width: 100%;
+		height: 100%;
+	}
+	#par-plot{
+		/*float: right;
+		padding-right: 10px;*/
+		float: left;
+	}
+	#par-year{
+		/*float: right;*/
+		float: left;
+	}
+	#par-title{
+		margin-left: auto;
+        margin-right: auto;
+	}
+
+	/* Evolution styling*/
+	#evo-container{
+		width: 100%;
+		height: 100%;
+		position: relative;
+	}
+
+	#evo-controls-container
+	{
+		width: 100%;
+	    height: 40px;
+		/*display: none;*/
+	}
+	#evo-cluster{
+		float: right;
+		padding-right: 10px;
+	}
+
+	#evo-year{
+		float: right;
+	}
+
+	#evo-main-container
+	{
+		/*width: 100%;*/
+		/*position: absolute;
+		top: 40px;
+		left: 0px;
+		right: 0px;
+		bottom: 0px;*/
+		position: relative;
+		width: 100%;
+		/*height: 100%;*/
+		/*height: calc(100%-40px);*/
+	}
+	#evo-left-container {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		bottom: 0;
+	}
+	#evo-right-container {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0px;
+	}
+
+	#clu-container {
+		width: 100%;
+		height: 100%;
+		/*position: relative;*/
+		/*float: left;*/
+	}
+
+	#sct-container {
+		width: 100%;
+		height: 100%;
+		/*position: relative;*/
+		/*float: left;*/
+	}
+
+	#sct-main-container{
+		overflow-y: auto;
+		width: 100%;
+		height: 100%;
+	}
+
+	#clu-main-container
+	{
+		position: relative;
+		width: 100%;
+		height: 100%;
+	}
+
+	#clu-main-container .axis text {
+	  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+	}
+
+	#clu-main-container .axis path,
+	#clu-main-container .axis line {
+		fill: none;
+		stroke: #000;
+		shape-rendering: crispEdges;
+		display: block;
+	}
+
+	#clu-main-container .hull {
+		stroke-width: 2px;
+		stroke-linejoin: round;
+		fill-opacity: 0.3;
+	}
+
+	#clu-main-container .dot {
+		stroke: black;
+		stroke-width: 1px;
+		fill-opacity: 0.6;
+	}
+	#clu-main-container .dot.selected{
+		fill-opacity: 1;
+		/*stroke-dasharray: 4.4;*/
+	}
+	#clu-main-container .dot.not-selected{
+		stroke: none;
+		/*stroke-dasharray: 4.4;*/
+	}
+	#clu-main-container .dot.selected.not-selected{
+		stroke: none;
+		/*stroke-dasharray: 4.4;*/
+	}
+
+	#clu-main-container .hull-line {
+		stroke-width: 2px;
+		stroke-linejoin: round;
+		fill-opacity: 0.3;
+	}
+/*<<<<<<< HEAD
+
+=======
+>>>>>>> GCAM-Electron/master*/
+	.ui-resizable-se {
+		display: none !important;
+	}
+	#evo-left-container .ui-resizable-e {
+		background-color: #e7e7e7 !important;
+	}
+	#evo-right-container .ui-resizable-e {
+		display: none !important;
+	}
+	.ui-resizable-s {
+		display: none !important;
+	}
+
+/*<<<<<<< HEAD*/
+     .lct{
+     	float: left;
+     }
+	.lct-axis path, 
+	.lct-axis line{
+		fill: none;
+	    stroke: #000;
+	    shape-rendering: crispEdges;
+	}
+	.lct-axis text {
+	    fill: #000;
+	}
+	.lct-axis .tick line {
+	    stroke: rgba(0, 0, 0, 0.1);
+	}
+	.lct-range{
+		fill: rgba(230, 230, 255, 0.8);
+  		stroke: rgba(216, 216, 255, 0.8);
+	}
+	.lct-meanline {
+	    fill: none;
+	    stroke: #000;
+	    stroke-width: 2;
+	}
+	.lct-upperline{
+		fill: none;
+		stroke: #e41a1c;
+		stroke-width: 3;
+	}
+	.lct-lowerline{
+		fill: none;
+		stroke: #377eb8;
+		stroke-width: 3;
+	}
+	.lct-image-border{
+		fill: transparent;
+	  	stroke: transparent;
+	  	shape-rendering: crispEdges;
+	}
+	.lct-image-border:hover {
+	  	stroke: black;
+	}
+    .removeIcon{
+		height: 13px;
+		position: relative;
+		float: right;
+		width: 13px;
+		-webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+    	filter: grayscale(100%);
+	}
+	.removeIcon:hover{
+		filter: none;
+        -webkit-filter: grayscale(0%);
+        cursor: pointer;
+	}
+
+	.sct{
+     	float: left;
+     }
+    .sct-axis path, 
+	.sct-axis line{
+		fill: none;
+	    stroke: #000;
+	    shape-rendering: crispEdges;
+	}
+	.sct-axis text {
+	    fill: #000;
+	}
+	.sct-axis .tick line {
+	    stroke: rgba(0, 0, 0, 0.1);
+	}
+	.sct-range{
+		fill: rgba(230, 230, 255, 0.8);
+  		stroke: rgba(216, 216, 255, 0.8);
+	}
+
+/*=======*/
+/*>>>>>>> GCAM-Electron/master*/
+	#loadingScreen{
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		background:  rgba(255,255,255,0.7);
+    	z-index:  1000;
+		height: 100%;
+		text-align: center;
+		margin: auto;
+		padding: 0;
+		overflow: hidden;
+		font-size: 250%;
+		display: none;
+		vertical-align: middle;
+	}
+
+	#fountainTextG{
+		position:absolute;
+	}
+
+	.fountainTextG{
+		color:rgb(0,126,204);
+		font-family:Arial;
+		font-size:106px;
+		text-decoration:none;
+		font-weight:normal;
+		font-style:normal;
+		float:left;
+		animation-name:bounce_fountainTextG;
+			-o-animation-name:bounce_fountainTextG;
+			-ms-animation-name:bounce_fountainTextG;
+			-webkit-animation-name:bounce_fountainTextG;
+			-moz-animation-name:bounce_fountainTextG;
+		animation-duration:3.46s;
+			-o-animation-duration:3.46s;
+			-ms-animation-duration:3.46s;
+			-webkit-animation-duration:3.46s;
+			-moz-animation-duration:3.46s;
+		animation-iteration-count:infinite;
+			-o-animation-iteration-count:infinite;
+			-ms-animation-iteration-count:infinite;
+			-webkit-animation-iteration-count:infinite;
+			-moz-animation-iteration-count:infinite;
+		animation-direction:normal;
+			-o-animation-direction:normal;
+			-ms-animation-direction:normal;
+			-webkit-animation-direction:normal;
+			-moz-animation-direction:normal;
+		transform:scale(.5);
+			-o-transform:scale(.5);
+			-ms-transform:scale(.5);
+			-webkit-transform:scale(.5);
+			-moz-transform:scale(.5);
+	}#fountainTextG_1{
+		animation-delay:1.24s;
+			-o-animation-delay:1.24s;
+			-ms-animation-delay:1.24s;
+			-webkit-animation-delay:1.24s;
+			-moz-animation-delay:1.24s;
+	}
+	#fountainTextG_2{
+		animation-delay:1.48s;
+			-o-animation-delay:1.48s;
+			-ms-animation-delay:1.48s;
+			-webkit-animation-delay:1.48s;
+			-moz-animation-delay:1.48s;
+	}
+	#fountainTextG_3{
+		animation-delay:1.73s;
+			-o-animation-delay:1.73s;
+			-ms-animation-delay:1.73s;
+			-webkit-animation-delay:1.73s;
+			-moz-animation-delay:1.73s;
+	}
+	#fountainTextG_4{
+		animation-delay:1.98s;
+			-o-animation-delay:1.98s;
+			-ms-animation-delay:1.98s;
+			-webkit-animation-delay:1.98s;
+			-moz-animation-delay:1.98s;
+	}
+	#fountainTextG_5{
+		animation-delay:2.22s;
+			-o-animation-delay:2.22s;
+			-ms-animation-delay:2.22s;
+			-webkit-animation-delay:2.22s;
+			-moz-animation-delay:2.22s;
+	}
+	#fountainTextG_6{
+		animation-delay:2.47s;
+			-o-animation-delay:2.47s;
+			-ms-animation-delay:2.47s;
+			-webkit-animation-delay:2.47s;
+			-moz-animation-delay:2.47s;
+	}
+	#fountainTextG_7{
+		animation-delay:2.72s;
+			-o-animation-delay:2.72s;
+			-ms-animation-delay:2.72s;
+			-webkit-animation-delay:2.72s;
+			-moz-animation-delay:2.72s;
+	}
+
+
+
+
+	@keyframes bounce_fountainTextG{
+		0%{
+			transform:scale(1);
+			color:rgb(0,126,204);
+		}
+
+		100%{
+			transform:scale(.5);
+			color:rgb(255,255,255);
+		}
+	}
+
+	@-o-keyframes bounce_fountainTextG{
+		0%{
+			-o-transform:scale(1);
+			color:rgb(0,126,204);
+		}
+
+		100%{
+			-o-transform:scale(.5);
+			color:rgb(255,255,255);
+		}
+	}
+
+	@-ms-keyframes bounce_fountainTextG{
+		0%{
+			-ms-transform:scale(1);
+			color:rgb(0,126,204);
+		}
+
+		100%{
+			-ms-transform:scale(.5);
+			color:rgb(255,255,255);
+		}
+	}
+
+	@-webkit-keyframes bounce_fountainTextG{
+		0%{
+			-webkit-transform:scale(1);
+			color:rgb(0,126,204);
+		}
+
+		100%{
+			-webkit-transform:scale(.5);
+			color:rgb(255,255,255);
+		}
+	}
+
+	@-moz-keyframes bounce_fountainTextG{
+		0%{
+			-moz-transform:scale(1);
+			color:rgb(0,126,204);
+		}
+
+		100%{
+			-moz-transform:scale(.5);
+			color:rgb(255,255,255);
+		}
+	}
+
+	td.highlight {
+	    background-color: whitesmoke !important;
+	}
+
+	.loadingBar {
+	    height: 10px;
+	    background-color: white;
+	    position: absolute;
+	    top: 0;
+	    left: 0;
+	    z-index: 999999;
+	}
+
+	.normalWeight {
+		font-weight: normal !important;
+	}
+
+	.newBackground {
+		/*background-color: #337ab7;*/
+		background-color: #428bca;
+	}
+
+	.navbar-default .navbar-nav>li>a.newColor {
+		color: white;
+	}
+
+	.navbar-default .navbar-brand.newColor {
+		color: white;
+	}
+
+	.navbar-default .navbar-nav>.dropdown>a .caret.newColor{
+		border-top-color: white;
+	}
+
+	.no-link-drop {
+		cursor: pointer;
+		text-align: left;
+	}
+
+	</style>
+</head>
+<body>
+	<div class="navbar navbar-default navbar-fixed-top newBackground" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand newColor" href="#" onclick= "location.href='';">GCAM</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="dropdown">
+              <a href="#file" class="dropdown-toggle newColor" data-toggle="dropdown">File <b class="caret newColor"></b></a>
+              <ul class="dropdown-menu">
+                <li><a class="no-link-drop" onclick="openClickedNew()">Open</a></li>
+                <li><a class="no-link-drop" onclick="showDialog('fea')">Select New Features</a></li>
+              </ul>
+            </li>
+            <li id="den-li"><a class="no-link newColor" onclick="showDialog('den')">Dendogram</a></li>
+            <li id="par-li"><a class="no-link newColor" onclick="showDialog('par')">Parallel Coordinates</a></li>
+            <li id="clu-li"><a class="no-link newColor" onclick="showDialog('clu')">Cluster</a></li>
+            <li id="sct-li"><a class="no-link newColor" onclick="showDialog('sct')">Scatter Plot</a></li>            
+            <li id="map-li"><a class="no-link newColor" onclick="showDialog('map')">Map</a></li>
+			<!--<li id="map-li"><a class="no-link newColor" onclick="showDialog('maps')">Maps</a></li>-->
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
+    <!-- <div id="loading">
+    <div id="canvasloader-container" class="wrapper"></div>
+    </div> -->
+
+    <div id="loadingScreen">
+    	<div id="fountainTextG"><div id="fountainTextG_1" class="fountainTextG">L</div><div id="fountainTextG_2" class="fountainTextG">o</div><div id="fountainTextG_3" class="fountainTextG">a</div><div id="fountainTextG_4" class="fountainTextG">d</div><div id="fountainTextG_5" class="fountainTextG">i</div><div id="fountainTextG_6" class="fountainTextG">n</div><div id="fountainTextG_7" class="fountainTextG">g</div></div>
+	</div>
+
+	
+
+	<div id="file-div" style="display:none;">
+		<div id="file-selection" style="display:none;">		
+		    <label for="fileSelected" >Select a file to view</label>
+		    <div id='fileSelectedDiv' name="fileSelectedDiv">
+		    	<label>
+		    		<select name="fileSelected" id="fileSelected" style="width:100%;">
+		    		</select>
+		    	</label>
+		    </div>
+		</div>
+		<div id="fileInputDivNew" class="fileInputDiv" style="display:none;">
+			<input type="file" id="fileInputNew" multiple/>
+			<input type="file" id="fileInputGeo" multiple/>
+		</div>
+	</div>
+
+	<!-- <div id="map" style="width: 600px; height: 400px"></div>
+	<input type="file" id="fileInput" multiple /> -->
+
+	<div id="den-container">
+	</div>
+
+	<div id="fig-container" style="display:none;">
+		<pre id="mypre"></pre>
+	</div>
+
+	<div id="par-container">
+		<div id="par-title">
+			<label>
+			</label>
+		</div>	
+		<div id="par-main-container">
+			<div id="par-svg-container"></div>
+			<table id="example" class="display" cellspacing="0" width="100%"></table>
+		</div>
+	</div>
+<!-- <<<<<<< HEAD -->
+
+	<!---*********************Begin Modification by Xing Liang, Aug 2016***************************-->
+	<div id="lct-container" style="display:none; height:100%; width: 100%">
+		<div id="lct-controls-container" style="height:5%; width: 100%">
+			<label>
+				Category:
+				<select id='lct-parentkey-select' class="" name="lct-pkey"></select>
+			</label>
+			<label>
+				Sub-Category:
+				<select id="lct-childkey-select" class="" name="lct-ckey"></select>
+			</label>
+			<input type="button" id="lct-add-btn" value="Add Line Chart">
+			<input type="button" id="lct-clear-btn" value="Clear All">
+		</div>
+		<div id="lct-main-container" style="overflow-y:scroll; width: 100%; height:95%;">
+		</div>
+	</div>
+	<!---/***********************End Modification by Xing Liang, Aug 2016***************************/ -->
+
+<!-- ======= -->
+<!-- >>>>>>> GCAM-Electron/master -->
+	<div id="evo-container" style="display:none;">
+		<div id="evo-controls-container">
+			<div id="evo-year">
+				<label>
+					Show Labels
+					<select id='evo-label-select' class="" name="evo-year" aria-controls="evo-year">
+						<option value="0" selected>Yes</option>
+						<option value="1">No</option>
+					</select>
+				</label>
+			</div>		
+			<div id="evo-cluster">
+				<label>
+					Select Dimensions
+					<select id='evo-cluster-select' class="" name="evo-cluster" aria-controls="evo-cluster">
+						<option value="0" selected>Cluster</option>
+						<option value="1">Cluster With Distance</option>
+						<option value="3">Feature Space</option>
+					</select>
+				</label>
+			</div>			
+		</div>
+		<div id="evo-main-container">
+			<div id="evo-left-container" class="pane"><a href="#" onclick="yearlyClusterRequest()" style="display: block;">Load View</a></div>
+			<div id="evo-right-container" class="pane"><label id="evo-scat-title"></label></div>
+		</div>
+	</div>
+
+	<div style="width: 50%;height: 50%;float: left;">
+
+	  <!-- Nav tabs -->
+	  <ul class="nav nav-tabs" role="tablist" >
+	    <li role="presentation" class="active"><a href="#clu-container" aria-controls="clu-container" role="tab" data-toggle="tab">Cluster</a></li>
+	    <li role="presentation"><a href="#sct-container" aria-controls="sct-container" role="tab" data-toggle="tab">Scatter Plot</a></li>
+	  </ul>
+
+	  <!-- Tab panes -->
+	  <div class="tab-content" style="height: calc(100% - 42px);">
+	  	<!-- Cluster Plot -->
+	    <div role="tabpanel" class="tab-pane active" id="clu-container">
+			<div id="clu-main-container">
+			</div>
+	    </div>
+	    <!-- Scatter Plot -->
+	    <div role="tabpanel" class="tab-pane" id="sct-container">			
+			<div id="sct-main-container">
+			</div>
+	    </div>
+	  </div>
+
+	</div>
+	<!-- 
+	<div id="clu-container">
+		
+	</div> -->
+
+	<!-- <div id="clu-container">
+		<div id="clu-controls-container">
+			<div id="clu-kvalue">
+				<label>
+					# of Clusters
+					<select id='clu-kvalue-select' class="" name="clu-kvalue" aria-controls="clu-kvalue">
+					</select>
+				</label>
+			</div>	
+		</div>
+		<div id="clu-main-container">
+			<a href="#" onclick="scenarioClusterRequest()">Load View</a>
+		</div>
+	</div> -->	
+
+	<!-- <div id="sct-container" style="display:none; height:100%; width: 100%">
+		<div id="sct-controls-container" style="width: 100%">
+			<label>
+				X-Axis Category:
+				<select id='sct-parentkey-select-x' class="" name="sct-pkey-x"></select>
+			</label>
+			<label>
+				Sub-Category:
+				<select id="sct-childkey-select-x" class="" name="sct-ckey-x"></select>
+			</label>
+			<label>
+				Labels:
+				<select id="sct-label-select" class="" name="sct-label">
+					<option value="0" selected>On</option>
+					<option value="1">Off</option>
+				</select>
+			</label>
+			<br>
+			<label>
+				Y-Axis Category:
+				<select id='sct-parentkey-select-y' class="" name="sct-pkey-y"></select>
+			</label>
+			<label>
+				Sub-Category:
+				<select id="sct-childkey-select-y" class="" name="sct-ckey-y"></select>
+			</label>
+			<input type="button" id="sct-add-btn" value="Add Scatter Plot">
+			<input type="button" id="sct-clear-btn" value="Clear All">
+		</div>
+		<div id="sct-main-container" style="overflow-y:scroll; width: 100%; height:92%;">
+		</div>
+	</div> -->
+
+	<div id="dialog-fea" title="Feature Selection" style="text-align: left">
+	</div>
+
+	<div id="dialog-sct" title="Scatter Plot" style="text-align: left">
+	 	<div id="sct-controls-container" style="width: 100%">
+	 		<fieldset>
+	  			<legend>X-Axis</legend>
+				<label>
+					Category:
+					<select id='sct-parentkey-select-x' class="" name="sct-pkey-x"></select>
+				</label>
+				<br>
+				<label>
+					Sub-Category:
+					<select id="sct-childkey-select-x" class="" name="sct-ckey-x"></select>
+				</label>
+			</fieldset>		
+			<br>
+			<fieldset>
+	  			<legend>Y-Axis</legend>
+				<label>
+					Category:
+					<select id='sct-parentkey-select-y' class="" name="sct-pkey-y"></select>
+				</label>
+				<br>
+				<label>
+					Sub-Category:
+					<select id="sct-childkey-select-y" class="" name="sct-ckey-y"></select>
+				</label>				
+			</fieldset>
+			<br>
+			<fieldset>
+	  			<legend>Data Point</legend>
+				<label>
+					Labels:
+					<select id="sct-label-select" class="" name="sct-label">
+						<option value="0" selected>On</option>
+						<option value="1">Off</option>
+					</select>
+				</label>
+			</fieldset>
+			<!-- <input type="button" id="sct-add-btn" value="Add Scatter Plot">
+			<input type="button" id="sct-clear-btn" value="Clear All"> -->
+		</div>
+	</div>
+
+	
+	<div id="dialog-map" title="Map">
+		<div id="map"></div>		
+	</div>
+
+	<div id="dialog-par" title="Parallel Coordinates" style="text-align: left">
+		<div id="par-controls-container">
+			<fieldset>
+	  			<legend>Data Controls</legend>
+				<label>
+					Plot
+					<select id='par-plot-select' class="" name="par-plot" aria-controls="par-plot">
+						<option value="0" selected>Value</option> 
+						<option value="1">Slope</option>
+					</select>
+				</label>
+
+				<label>
+					Year
+					<select id='par-year-select' class="" name="par-year" aria-controls="par-year"></select>
+				</label>
+			</fieldset>			
+			<br>	
+			<fieldset>
+	  			<legend>Axis</legend>
+				<label>
+					Category:
+					<select id='par-parentkey-select' class="" name="par-pkey"></select>
+				</label>
+				<br>
+				<label>
+					Sub-Category:
+					<select id="par-childkey-select" class="" name="par-ckey"></select>
+				</label>
+				<br>
+				<!-- <input type="button" id="par-add-btn" value="Add Axis" class="btn btn-default">
+				<input type="button" id="par-clear-btn" value="Clear All" class="btn btn-default"> -->
+				<!-- <input type="button" id="par-load-btn" value="Load"> -->
+			</fieldset>		
+		</div>
+	</div>
+
+	<div id="dialog-clu" title="Cluster" style="text-align: left">
+	 	<div id="clu-controls-container" style="width: 100%">
+	 		<fieldset>
+	  			<legend>K-Means</legend>
+				<label>
+					Number of Clusters
+					<select id='clu-kvalue-select' class="" name="clu-kvalue" aria-controls="clu-kvalue">
+					</select>
+				</label>
+	 		</fieldset>
+			<fieldset>
+				<legend>Data Point</legend>
+				<label>
+					Labels:
+					<select id="clu-label-select" class="" name="clu-label">
+						<option value="0">On</option>
+						<option value="1" selected>Off</option>
+					</select>
+				</label>
+			</fieldset>
+		</div>
+	</div>
+
+	<div id="dialog-den" title="Dendogram" style="text-align: left">
+		<fieldset>
+			<legend>Pan to</legend>
+			<button onclick="state.den.panTo(0)">Root</button>
+			<button onclick="state.den.panTo(1)">Tail</button>
+		</fieldset>
+		<br/>
+		<fieldset>
+			<legend>Legend</legend>
+			<div id="dialog-legend-div" style="width: 100%;">
+			</div>
+		</fieldset>
+	</div>
+	
+	
+	<script src="lib/leaflet.js"></script>
+
+	<script type="text/javascript" src="lib/jquery-3.2.0.min.js"></script>
+	<script type="text/javascript" src="lib/jquery-migrate-3.0.0.min.js"></script>
+	<!-- <script src="lib/jquery-ui/assets/js/vendor/jquery-1.9.1.min.js" type="text/javascript"></script>
+	<script src="lib/jquery-ui/assets/js/vendor/jquery-migrate-1.2.1.min.js" type="text/javascript"></script> -->
+	
+	<!-- <script type="text/javascript" src="lib/jquery.min.js" onload="window.$ = window.jQuery = module.exports;"></script> -->
+	<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script> -->
+
+	<script type="text/javascript" src="lib/d3.min.js"></script>
+	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.14/d3.min.js"></script> -->
+
+	<!-- <script src="lib/bootstrap/js/bootstrap.min.js"></script> -->
+	<script src="lib/jquery-ui/assets/js/vendor/bootstrap.js"></script>
+	
+
+	<!-- <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script> -->
+	<!-- <script src="lib/jquery-ui/jquery-ui.min.js"></script> -->
+	<script src="lib/jquery-ui/assets/js/vendor/jquery-ui-1.10.3.custom.min.js"></script>
+
+	<script src="lib/bootstrap-select.min.js"></script>
+	<script src="lib/socket.io-1.4.5.js"></script>
+
+	<script src="lib/datatables.min.js"></script>
+	<!-- <script src="https://cdn.datatables.net/t/dt/dt-1.10.11,fc-3.2.1,fh-3.1.1/datatables.min.js"></script> -->
+	<!-- <script src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script> -->
+
+	<script src="lib/colorbrewer.js"></script>
+	<script src="lib/d3.tip.v0.6.3.js"></script>
+	<script src="lib/figue.js"></script>
+	<script src="lib/canvasloader.js"></script>
+	<script src="lib/jQuery-contextMenu/jquery.contextMenu.min.js"></script>
+	<script src="lib/jQuery-contextMenu/jquery.ui.position.min.js"></script>
+	<!-- // <script src="lib/pca.js"></script> -->
+	<script src="lib/socket.io.js"></script>
+
+	<script src="js/Global.js"></script>
+	<script src="js/Loading.js"></script>
+	<script src="js/File.js"></script>
+	<script src="js/Process.js"></script>
+
+	<script src="js/Socket.js"></script>
+	<script src="js/Map.js"></script>
+	<script src="js/Dendogram.js"></script>
+	<script src="js/ParallelCoordinates.js"></script>
+	<script src="js/DataTable.js"></script>
+	<!-- <script src="js/EvoScatterPlot.js"></script> -->
+	<!-- <script src="js/Evo.js"></script> -->
+	<script src="js/ScatterPlot.js"></script>
+	<!-- <script src="js/LineChart.js"></script> -->
+	<script src="js/DrawRegions.js"></script>
+	<script src="js/Cluster.js"></script>
+
+	<script src="js/FeatureSelection.js"></script>
+	<!--<script src="js/Regions.js"></script>-->
+	<!--<script src="js/Maps.js"></script>-->
+	<script>
+		localStorage.clear();
+	    
+	    // Make 'view' active and visible, make current 'view' inactive and hide it
+ 		function changeView(view, complete){
+ 			if(state.activeView != view){
+ 				$(state.activeView + '-li').removeClass('active');
+ 				$(state.activeView + '-container').hide();
+
+ 				$(view + '-li').addClass('active');
+	 			$(view + '-container').show(complete);
+
+	 			if(view == "#map"){
+	 				if(!state.map.refreshed){
+	 					state.map._onResize();
+	 				}
+	 			}
+
+	 			state.activeView = view;
+ 			}
+ 		}
+
+ 		// Make 'view' active and visible
+ 		function setActiveView(view){
+ 			$(view + '-li').addClass('active');
+ 			state.activeView = view;
+ 			$(state.activeView + '-container').show();
+ 		}
+
+ 		function showDialog(view){
+ 			$(".ui-dialog-content").dialog("close");
+ 			state.activeDialog = view;
+
+ 			switch(view){
+ 				case 'fea':
+ 					if(d3.keys(clusterKeys).length <= 0){
+						return;
+					}
+					break;
+				case 'den':
+					dendogramLegend();					
+					break;
+				case 'map':
+					if(!state.map.refreshed){
+						state.map._onResize();
+						state.map.refreshed = true;
+					}
+				case 'clu':
+					if(!$('#clu-container').hasClass('active')){
+						$('a[href="#clu-container"]').trigger('click');
+					}
+					break;
+				case 'sct':
+					if(!$('#sct-container').hasClass('active')){
+						$('a[href="#sct-container"]').trigger('click');
+					}
+					break;				
+ 			}
+ 			$('#dialog-' + view).dialog( "open" );
+ 		}
+
+ 		// When page is ready setup button clicks and changes for selectors
+ 		$(function() {
+ 			// Electron hack to fix body height
+ 			$('body').height($('body').height() - 20);
+ 			$( window ).resize(function() {
+ 				$('body').css('height','');
+				$('body').height($('body').height() - 20);
+			});
+
+
+ 			// setActiveView("#den");
+ 			// changeView("#map");
+
+ 			$('#fileSelected').change(function(e) {
+	    		if(state.fileMode){
+	    			// removeTimeline();
+	    		}
+	    		else{
+	    			// console.log(data.item.value)
+	    			map.removeLayer(currentFile.layer);
+					//console.log("changing files!!!!");
+					currentFile = dataArray[data.item.value];
+					dataArray[data.item.value].layer.addTo(map);
+	    		}
+	        	removeTimeline();
+	    	});
+
+		    $('#par-year-select').change(function(e) {
+				state.parCoor.year = $(this).val();
+				state.parCoor.yearValue = $("option:selected", this).text();
+				if(state.parCoor.filenames.length){
+					state.parCoor.obj = state.server ? new parCoorNew(state.parCoor.filenames, true, state.parCoor.country) : new parCoor(state.parCoor.filenames, true, state.parCoor.country);
+				}
+			})
+			$('#par-plot-select').change(function(e) {
+				state.parCoor.plot = $(this).val();
+				if(state.parCoor.plot == 1){
+					$('#par-year').hide();
+				}
+				else{
+					$('#par-year').show();
+				}
+				if(state.parCoor.filenames.length){
+					state.parCoor.obj = state.server ? new parCoorNew(state.parCoor.filenames, true, state.parCoor.country) : new parCoor(state.parCoor.filenames, true, state.parCoor.country);
+				}
+			})
+
+ 		});
+
+		// Setup Leaflet map
+		var bounds = L.latLngBounds(L.latLng(90,180), L.latLng(-60,-180));
+		var map = L.map('map',{
+			center: [40,0],
+			zoom: 2,
+			maxBounds:bounds
+			//crs: L.CRS.EPSG4326
+		});
+
+		L.tileLayer(
+			"https://c.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+		    attribution: '&copy; ' + '<a href="https://openstreetmap.org">OpenStreetMap</a>' + ' Contributors',
+		      maxZoom: 5,
+		      minZoom: 1,
+		      tileSize: 256,
+		      noWrap: true,
+		      bounds:bounds
+		}).addTo(map);
+
+		state.map = map;
+		state.map.refreshed = false;
+
+
+		// Setup file open
+		function openClickedNew(){
+		    $('#fileInputNew').click();
+		}
+		/*function openClickedGeo(){
+			$('#fileInputGeo').click();
+		}	*/	
+
+		function displayContents(contents) {
+		  var element = document.getElementById('file-content');
+		  element.innerHTML = contents;
+		}
+		document.getElementById('fileInputNew').addEventListener('change', readFileNew, false);
+		// document.getElementById('fileInputGeo').addEventListener('change', readFileGeo, false);
+
+		globalCheck = false;		
+	</script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>External SVG + D3</title>
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <style>
+        @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300|Josefin+Slab|Arvo|Lato|Vollkorn|Abril+Fatface|Old+Standard+TT|Droid+Sans|Lobster|Inconsolata|Montserrat|Playfair+Display|Karla|Alegreya|Libre+Baskerville|Merriweather|Lora|Archivo+Narrow|Neuton|Signika|Questrial|Fjalla+One|Bitter|Varela+Round);
+        .background {
+            fill: #eee;
+            pointer-events: all;
+        }
+
+        .map-layer {
+            fill: #fff;
+            stroke: #aaa;
+        }
+
+        text {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-weight: 300;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="vis"></div>
+    <img src="lc.png" alt="">
+    <img height="175px" width="275px" src="test.png" alt="">
+
+    <script>
+        // Extract the width and height that was computed by CSS.
+        /* var chartDiv = document.getElementById("vis");
+        var width = chartDiv.clientWidth;
+        var height = chartDiv.clientHeight;
+
+        // load the external svg from a file
+        d3.xml("test.svg", "image/svg+xml", function (xml) {
+            var importedNode = document.importNode(xml.documentElement, true);
+            d3.select("div#vis")
+                .each(function () {
+                    this.appendChild(importedNode);
+                })
+            // inside of our d3.xml callback, call another function
+            // that styles individual paths inside of our imported svg
+            // styleImportedSVG()
+        });
+
+        function styleImportedSVG() {
+            d3.select('svg')
+                .on('mouseover', function () {
+                    console.log('mouseover');
+                    console.log('this', this);
+                    d3.selectAll('path')
+                        .style({
+                            'fill-opacity': 0.1,
+                            'stroke-opacity': 0.3
+                        })
+                })
+                .on('mouseout', function () {
+                    console.log('mouseout');
+                    d3.selectAll('path')
+                        .style({
+                            'fill-opacity': 1,
+                            'stroke-opacity': 1
+                        })
+                })
+        } */
+    </script>
+</body>
+
+</html>

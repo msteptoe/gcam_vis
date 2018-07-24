@@ -277,3 +277,27 @@ function buildProcessingJobRadio(jobsResult) {
 		radioContainer.append('<label class="normalWeight" for="processingJobs-radio-' + job.index + '">' + job.value + '</label><br>');
 	});
 }
+
+function processRandomDbs(jobName, count) {
+	var allDatabases = $("#database-list input");
+	var selected = [];
+	var databases = [];
+
+	while (selected.length < count) {
+		var index = Math.floor(Math.random() * 500);
+
+		if (selected.indexOf(index) == -1) {
+			selected[selected.length] = index;
+		}
+	}
+
+	selected.sort(function (a, b) { return a - b });
+
+	$.each(selected, function (i, index) {
+		databases[databases.length] = state.subDirs[allDatabases[index].value].split(PATH_SEP).pop();
+	});
+
+	console.log(databases);
+
+	socket.createJob(jobName, getDatabasePath(), databases, true, "");
+}

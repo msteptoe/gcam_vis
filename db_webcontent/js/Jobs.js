@@ -286,7 +286,7 @@ function processRandomDbs(jobName, count) {
 	while (selected.length < count) {
 		var index = Math.floor(Math.random() * 500);
 
-		if (selected.indexOf(index) == -1) {
+		if (selected.indexOf(index) == -1 && index != 420 && index != 199) {
 			selected[selected.length] = index;
 		}
 	}

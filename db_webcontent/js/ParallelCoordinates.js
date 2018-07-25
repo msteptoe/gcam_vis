@@ -307,12 +307,12 @@ ParallelCoordinatesPlot.prototype.plot = function () {
 			d = Math.abs(d);
 			var array = ['', 'k', 'M', 'G', 'T', 'P'];
 			var i = 0;
-			while (d > 1000) {
+			while (d >= 1000) {
 				i++;
 				d = d / 1000;
 			}
 
-			d = d + '' + array[i];
+			d = d.toFixed(2) + '' + array[i];
 
 			return (sign == -1 ? '-' : '') + d;
 		});

@@ -741,16 +741,14 @@
 			<div class="navbar-collapse collapse">
 				<ul class="nav navbar-nav">
 
-					<li class="dropdown">
+					<!-- <li class="dropdown">
 						<a href="#file" class="dropdown-toggle newColor" data-toggle="dropdown">Jobs <b class="caret newColor"></b></a>
 						<ul class="dropdown-menu">
 							<li><a class="no-link-drop" onclick="showDialog('newJob')">New</a></li>
 							<li><a class="no-link-drop" onclick="showDialog('processingJobs')">Processing</a></li>
 							<li><a class="no-link-drop" onclick="showDialog('completedJobs')">Completed</a></li>
-							<!-- <li><a class="no-link-drop" onclick="runDatabase(true)">Run</a></li> -->
-							<!--<li><a class="no-link-drop" onclick="showDialog('fea')">Select New Features</a></li>-->
 						</ul>
-					</li>
+					</li> -->
 					<!-- <li class="dropdown">
 						<a href="#file" class="dropdown-toggle newColor" data-toggle="dropdown">File <b class="caret newColor"></b></a>
 						<ul class="dropdown-menu">
@@ -1312,6 +1310,12 @@
 		// document.getElementById('fileInputNew').addEventListener('change', readFileNew, false);
 
 		globalCheck = false;
+
+		var openDemo = "jobs/SmallDemo10";
+		if(openDemo){
+			socket.openJob(openDemo);
+		}
+
 	</script>
 </body>
 

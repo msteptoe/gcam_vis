@@ -160,7 +160,7 @@ function getDatabasePath() {
 		path = '/pic/projects/GCAM/cornell_data/' + $('#predefined-dPaths-select :selected').val();
 
 		if (OSName == "Windows") {
-			path = 'D:\\msteptoe\\Documents\\git\\11_01_16\\GCAM-Electron\\r_scenarios';
+			path = 'E:\\msteptoe\\Documents\\git\\11_01_16\\GCAM-Electron\\r_scenarios';
 		}
 	}
 	return path;

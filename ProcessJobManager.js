@@ -21,15 +21,15 @@ class ProcessJobManager {
         this.jobDir = LOCAL ? 'jobs' + path.sep : path.sep + 'pic' + path.sep + 'scratch' + path.sep + 'gcam_server' + path.sep;
 
         fs.mkdir(this.jobDir)
-        .then(res =>{
-            console.log('Job Directory Created:', self.jobDir)
-        })
-        .catch(err => {
-            if (err.code == 'EEXIST') {
-                console.log('jobDir already exists');
-            }
-            console.log('Job Directory:', self.jobDir);
-        })
+            .then(res => {
+                console.log('Job Directory Created:', self.jobDir)
+            })
+            .catch(err => {
+                if (err.code == 'EEXIST') {
+                    console.log('jobDir already exists');
+                }
+                console.log('Job Directory:', self.jobDir);
+            })
 
         require('dns').lookup(require('os').hostname(), function (err, address, fam) {
             // console.log('ip address: ' + address);
@@ -47,10 +47,10 @@ class ProcessJobManager {
 
             if (this.processJobs[socket.processID]) {
                 var processJob = this.processJobs[socket.processID];
-                if(processJob.startTime == undefined){
+                if (processJob.startTime == undefined) {
                     processJob.startTime = new Date();
                 }
-                
+
                 processJob.addSocket(socket);
             }
             else {
@@ -121,6 +121,15 @@ class ProcessJobManager {
                     }, 3000);
                     setTimeout(function () {
                         self.slurmJM.submitJobLocal(1, args.concat(["345", "long", true]));
+                    }, 6000);
+                    setTimeout(function () {
+                        self.slurmJM.submitJobLocal(1, args.concat(["456", "long", true]));
+                    }, 6000);
+                    setTimeout(function () {
+                        self.slurmJM.submitJobLocal(1, args.concat(["567", "long", true]));
+                    }, 6000);
+                    setTimeout(function () {
+                        self.slurmJM.submitJobLocal(1, args.concat(["789", "long", true]));
                     }, 6000);
                 }
                 else {

@@ -275,6 +275,9 @@ function ScatterPlot(data, extents, axes, containerId, width, height) {
 				.duration(500)
 				// .style("opacity", 0);
 				.style("display", "none");
+		})
+		.on("click", function (d, i) {
+			$('.foreground').find("[name='" + scenarioNames[i] + "']").toggle();
 		});
 
 	// render each element: axis, path, animation and title

@@ -83,6 +83,8 @@ function addParAxis() {
 	if (parCoorPlot.getAxisIndex(axis) == -1) {
 		parCoorPlot.addAxis(axis, UNITS[query]);
 		socket.getParCoorAxis(parCoorPlot.getFiles(), undefined, query, variable, value);
+		console.log(axis, UNITS[query])
+		console.log(query, variable, value);
 	}
 }
 

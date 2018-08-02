@@ -1,4 +1,4 @@
-$(function() {
+$(function () {
 	$("#dialog-den").dialog({
 		resizable: false,
 		height: "auto",
@@ -8,13 +8,13 @@ $(function() {
 		buttons: [
 			{
 				text: "Done",
-				click: function() {
-					$( this ).dialog( "close" );
+				click: function () {
+					$(this).dialog("close");
 				}
 			}
 		]
 	});
-	$("#dialog-den button" ).button();
+	$("#dialog-den button").button();
 });
 
 function combineInputs(children) {
@@ -173,7 +173,7 @@ function zDendrogram(clusterParam) {
 	var i = 0;
 	var duration = 750;
 	var root;
-	var tail = {level: -1};
+	var tail = { level: -1 };
 
 	var nodeR = 4.5;
 	var horizontalSeparationBetweenNodes = nodeR * 5;
@@ -186,9 +186,9 @@ function zDendrogram(clusterParam) {
 	var tree = d3.layout.tree()
 		// .size([viewerHeight, viewerWidth]);
 		.nodeSize([nodeR + horizontalSeparationBetweenNodes, nodeR + verticalSeparationBetweenNodes])
-		/*.separation(function (a, b) {
-			return a.parent == b.parent ? 1 : 1.25;
-		});*/
+	/*.separation(function (a, b) {
+		return a.parent == b.parent ? 1 : 1.25;
+	});*/
 
 	// define a d3 diagonal projection for use by the node paths later on.
 	var diagonal = d3.svg.diagonal()
@@ -198,8 +198,8 @@ function zDendrogram(clusterParam) {
 
 	// define a d3 ordinal scale for coloring nodes
 	var colors = d3.scale.ordinal()
-	    .domain(d3.keys(clusterParam.inputs))
-	    .range(colorbrewer.Set3[12]);
+		.domain(d3.keys(clusterParam.inputs))
+		.range(colorbrewer.Set3[12]);
 
 	state.den.colors = colors;
 
@@ -335,38 +335,51 @@ function zDendrogram(clusterParam) {
 	// Toggle children on click.
 
 	function click(d) {
-		console.log(d.name, d.name.indexOf("Scenarios") > -1)
-		if(d.hasOwnProperty('name') && d.name == "Scenarios"){
+		// console.log(d.name, d.name.indexOf("Scenarios") > -1)
+
+		if (d.hasOwnProperty('name') && d.name == "Scenarios") {
 			if (d3.event.shiftKey) {
 				socket.filterReport(FILES);
 			}
-			else{
+			else {
 				parCoorPlot.setFiles([]);
-				var count = parCoorPlot.getAxisCount();
-				if (count < 2) {
-					showDialog('par');
-				}
-				else {
-					parCoorPlot.plot();
-				}
+				// var count = parCoorPlot.getAxisCount();
+				// if (count < 2) {
+				// 	showDialog('par');
+				// }
+				// else {
+				// 	parCoorPlot.plot();
+				// }
 			}
 		}
-		return console.log(d)
-
-		showLoading(true);
-		var filename = [];
-		if (d.hasOwnProperty('name') && !d.hasOwnProperty('children')) {
-			filename = [d.name];
-		}
-		else if(d.hasOwnProperty('children') && d.children.every(function(child){filename.push(child.name); return !child.hasOwnProperty('children');})){
-			filename.sort();
-		}
 		else{
-			filename = [];
-			getAllChildren(filename, d);
-			filename.sort();
-		}		
-		// state.parCoor.obj = state.server ? new parCoorNew(filename) : new parCoor(filename);
+			var filename = [];
+			if (d.hasOwnProperty('name') && !d.hasOwnProperty('children')) {
+				filename = [d.name];
+			}
+			else if (d.hasOwnProperty('children') && d.children.every(function (child) { filename.push(child.name); return !child.hasOwnProperty('children'); })) {
+				filename.sort();
+			}
+			else {
+				filename = [];
+				getAllChildren(filename, d);
+				filename.sort();
+			}
+			console.log('filename:', filename);
+
+			parCoorPlot.setFiles(filename);
+		}
+
+		var count = parCoorPlot.getAxisCount();
+		if (count < 2) {
+			showDialog('par');
+		}
+		else {
+			parCoorPlot.plot();
+		}
+
+		// return console.log(d);
+		// showLoading(true);
 	}
 
 	function update(source) {
@@ -376,7 +389,7 @@ function zDendrogram(clusterParam) {
 		// Edit: Only used to find lowest child now
 		var levelWidth = [1];
 		var childCount = function (level, n) {
-			if(level > tail.level) tail = {node: n, level: level};
+			if (level > tail.level) tail = { node: n, level: level };
 
 			if (n.children && n.children.length > 0) {
 				if (levelWidth.length <= level + 1) levelWidth.push(0);
@@ -426,10 +439,10 @@ function zDendrogram(clusterParam) {
 			.style("stroke", function (d) {
 				return d.color != undefined ? colors(d.color) : "steelblue";
 			})
-			.style('fill', function(d, i) {
+			.style('fill', function (d, i) {
 				// console.log(i, d);
 				var color;
-				if(d.color != undefined){
+				if (d.color != undefined) {
 					color = colors(d.color);
 				}
 				return color;
@@ -439,10 +452,10 @@ function zDendrogram(clusterParam) {
 			// .attr("x", function (d) {
 			// 	return d.children || d._children ? -10 : 10;
 			// })
-			.attr("x", function(d) {
+			.attr("x", function (d) {
 				return d.children || d._children ? 0 : 10;
 			})
-			.attr("y", function(d) {
+			.attr("y", function (d) {
 				return d.children || d._children ? 12 : 0;
 			})
 			.attr("dy", ".35em")
@@ -568,14 +581,14 @@ function zDendrogram(clusterParam) {
 			+ "V" + target.x + "H" + target.y;
 	}
 
-	state.den.panTo = function(dest){
-		if(dest)
+	state.den.panTo = function (dest) {
+		if (dest)
 			centerNode(tail.node);
 		else
 			centerNode(root);
 	}
 
-	state.den.toggle = function(){
+	state.den.toggle = function () {
 		toggleChildren(root);
 		update(root);
 		centerNode(root);
@@ -617,7 +630,7 @@ function dendogramLegend() {
 			autoOpen: false
 		});
 	}*/
-	
+
 	$("#dialog-legend-div").empty();
 
 	var svg = d3.select("#dialog-legend-div").append("svg")
@@ -641,8 +654,8 @@ function dendogramLegend() {
 	legend.append('rect')
 		.attr('width', legendRectSize)
 		.attr('height', legendRectSize)
-		.style('fill', function(d,i){ return color(i)})
-		.style('stroke', function(d,i){ return color(i)});
+		.style('fill', function (d, i) { return color(i) })
+		.style('stroke', function (d, i) { return color(i) });
 
 	legend.append('text')
 		.attr('x', legendRectSize + legendSpacing)
@@ -662,7 +675,7 @@ function dendogramLegendOriginal() {
 	var legendSpacing = 4;
 	var lineHeight = legendRectSize + legendSpacing;
 	var height = color.domain().length * lineHeight + legendSpacing + 20;
-	
+
 	$("#dialog-legend-div").empty();
 
 	var svg = d3.select("#dialog-legend-div").append("svg")

@@ -263,8 +263,12 @@ function ClusterPlot(kmeans, pca) {
 			$(tooltip).empty();
 		})
 		.on("click", function (d, i) {
-			state.parCoor.obj = state.server ? new parCoorNew([labels[i]]) : new parCoor([labels[i]]);
-			var scenarios = [labels[i]];
+			// state.parCoor.obj = state.server ? new parCoorNew([labels[i]]) : new parCoor([labels[i]]);
+			// var scenarios = [labels[i]];
+
+			// console.log(labels[i], d);
+
+			$('.foreground').find("[name='" + labels[i] + "']").toggle();
 		});
 
 	this.drawLabels = function (draw) {

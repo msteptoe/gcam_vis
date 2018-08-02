@@ -202,7 +202,21 @@ function Socket() {
             // console.log('S_Dendrogram:', data);
             if (data) {
                 zDendrogram(JSON.parse(data));
-                hideLoading();
+
+                // BEGIN HERE
+                console.log('This is for demo!');
+                var axes = ['CO2 concentrations', 'Climate forcing', 'Global mean temperature', 'GDP by region', 'PPP GDP by region'];
+
+                $.each(axes, function(index, axis){
+                    parCoorPlot.addAxis(axis, UNITS[axis]);
+                    socket.getParCoorAxis([], undefined, axis, undefined, undefined);
+                });
+                parCoorPlot.plot();
+                // END HERE
+
+                setTimeout(() => {
+                    hideLoading();
+                }, 10000);
             }
             else {
                 alert('Please try again.');
